@@ -1,0 +1,73 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+    
+    <h:body>
+        <ui:composition template="layout.xhtml">
+            <ui:define name="title">
+                Current
+            </ui:define>
+            
+            <ui:define name="content">
+                <h2>#{msg.menu2}</h2>
+                
+                <fieldset class="chs">
+                    <table>
+                        <ui:repeat value="#{personController.currentChampionships}" var="c" varStatus="status">
+                            <tr>
+                                <h:form>
+                                    <td><h:commandLink value="#{c.name}" action="#{personController.setSelectedC(status.index)}"/></td>
+                                    <td>(<h:commandLink value="#{msg.end}" action="#{personController.setChampionshipFinished(c)}"/>)</td>
+                                </h:form>
+                            </tr>
+                        </ui:repeat>
+                    </table>
+                </fieldset>
+                
+                <fieldset class="matches">
+                    <h:form>
+                        <h:selectOneMenu value="#{personController.stageC}" style="width: 200px" disabled="true">
+                            <f:selectItems value="#{personController.selectedC.stageList}"/>
+                        </h:selectOneMenu>
+                    </h:form>
+                    
+                    <h:form>
+                        <h:commandLink value="#{msg.edit}" action="#{personController.editOn()}" rendered="#{!personController.edit}"/>
+                        <h:commandLink value="#{msg.edit}" action="#{personController.editOff()}" rendered="#{personController.edit}" style="color: red"/>
+                    </h:form>
+                    
+                    <h:form rendered="#{personController.edit}">
+                        <table class="dtable">
+                            <ui:repeat value="#{personController.stageC.gameList}" var="h" varStatus="status">
+                                <tr class="#{personController.evenRow(status.index) ? 'par' : 'impar'}">
+                                    <td>#{h.number}.</td>
+                                    <td>#{h.home.name}</td>
+                                    <td><h:inputText value="#{h.homeScore}" style="width: 20px; margin: 0px -7px 0px -7px; padding: 2px 0px"/></td>
+                                    <td>X</td>
+                                    <td><h:inputText value="#{h.visitScore}" style="width: 20px; margin: 0px -7px 0px -7px; padding: 2px 0px"/></td>
+                                    <td>#{h.visitor.name}</td>
+                                </tr>
+                            </ui:repeat>
+                        </table>
+                        <br />
+                        <h:commandLink value="#{msg.nextstage}" action="#{personController.nextStage()}"/>
+                    </h:form>
+                    
+                    <h:dataTable rendered="#{!personController.edit}" value="#{personController.stageC.gameList}" var="g" styleClass="dtable" rowClasses="par, impar">
+                        <h:column>#{g.number}.</h:column>
+                        <h:column>#{g.home.name}</h:column>
+                        <h:column>#{g.homeScore}</h:column>
+                        <h:column>X</h:column>
+                        <h:column>#{g.visitScore}</h:column>
+                        <h:column>#{g.visitor.name}</h:column>
+                    </h:dataTable>
+                </fieldset>
+                
+            </ui:define>
+        </ui:composition>
+    </h:body>
+    
+</html>
