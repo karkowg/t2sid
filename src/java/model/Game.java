@@ -5,7 +5,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,6 +13,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -30,9 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "Game.findByVisitScore", query = "SELECT g FROM Game g WHERE g.visitScore = :visitScore")})
 public class Game extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
+    @Id @GeneratedValue(generator="GameIdGenerator")
+    @GenericGenerator(name="GameIdGenerator", strategy="org.hibernate.shards.id.ShardedUUIDGenerator")
     @Column(name = "idGame")
     private Integer idGame;
     @Basic(optional = false)

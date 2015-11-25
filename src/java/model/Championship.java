@@ -7,7 +7,6 @@ import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -19,6 +18,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.hibernate.annotations.GenericGenerator;
 
 /**
  *
@@ -34,9 +34,8 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Championship.findByFinished", query = "SELECT c FROM Championship c WHERE c.finished = :finished")})
 public class Championship extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Basic(optional = false)
+    @Id @GeneratedValue(generator="ChampionshipIdGenerator")
+    @GenericGenerator(name="ChampionshipIdGenerator", strategy="org.hibernate.shards.id.ShardedUUIDGenerator")
     @Column(name = "idChampionship")
     private Integer idChampionship;
     @Basic(optional = false)
