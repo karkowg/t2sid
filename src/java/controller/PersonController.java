@@ -2,6 +2,7 @@ package controller;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -258,14 +259,14 @@ public class PersonController extends Controller<Person> {
     }
     
     private void updateUserData() {
-        String cList = "from Championship c where c.owner.idPerson = " + user.getId();
+        String cList = "from Championship c where c.person.idPerson = " + user.getIdPerson();
         championships = chCTRL.getList(cList);
         for (Championship c : championships) {
-            String sList = "from Stage s where s.championship.idChampionship = " + c.getId();
-            c.setStageList(stageCTRL.getList(sList));
+            String sList = "from Stage s where s.championship.idChampionship = " + c.getIdChampionship();
+            c.setStages(new HashSet<Stage>(stageCTRL.getList(sList)));
             for (Stage s : c.getStageList()) {
-                String gList = "from Game g where g.stage.idStage = " + s.getId();
-                s.setGameList(gameCTRL.getList(gList));
+                String gList = "from Game g where g.stage.idStage = " + s.getIdStage();
+                s.setGames(new HashSet<Game>(gameCTRL.getList(gList)));
             }
         }
         setSelectedC(-1);
@@ -293,12 +294,12 @@ public class PersonController extends Controller<Person> {
     }
     
     public void setPlayoffs() {
-        championship.setOwner(user);
+        championship.setPerson(user);
         championship = chCTRL.insert(championship);
         
         Stage s = new Stage();
         s.setChampionship(championship);
-        s.setNTeams(teams.size());
+        s.setNteams(teams.size());
         s.setName(getStageName(teams.size()));
         s = stageCTRL.insert(s);
         
@@ -335,11 +336,11 @@ public class PersonController extends Controller<Person> {
             int index = Util.getRandom(tlist.size());
             g.setNumber(i);
             Team t = tlist.remove(index);
-            g.setHome(t);
+            g.setTeamByFkHome(t);
             t = new Team("W.O.");
             t.setChampionship(championship);
             teamCTRL.insert(t);
-            g.setVisitor(t);
+            g.setTeamByFkVisitor(t);
             g.setHomeScore(1);
             g.setVisitScore(0);
             games.add(g);
@@ -352,10 +353,10 @@ public class PersonController extends Controller<Person> {
             g.setNumber(i);
             index = Util.getRandom(tlist.size());
             Team t = tlist.remove(index);
-            g.setHome(t);
+            g.setTeamByFkHome(t);
             index = Util.getRandom(tlist.size());
             t = tlist.remove(index);
-            g.setVisitor(t);
+            g.setTeamByFkVisitor(t);
             g.setHomeScore(0);
             g.setVisitScore(0);
             games.add(g);
@@ -381,11 +382,11 @@ public class PersonController extends Controller<Person> {
     }
     
     private Team getWinner(Game g) {
-        return g.getHomeScore() > g.getVisitScore()? g.getHome() : g.getVisitor();
+        return g.getHomeScore() > g.getVisitScore()? g.getTeamByFkHome() : g.getTeamByFkVisitor();
     }
     
     private void updateScores() {
-        for (Game g : stageC.getGameList()) {
+        for (Game g : new ArrayList<Game>(stageC.getGames())) {
             gameCTRL.update(g);
         }
         editOff();
@@ -393,7 +394,7 @@ public class PersonController extends Controller<Person> {
     
     private ArrayList<Team> getWinnerTeams() {
         ArrayList<Team> winners = new ArrayList<Team>();
-        for (Game g : stageC.getGameList()) {
+        for (Game g : new ArrayList<Game>(stageC.getGames())) {
             winners.add(getWinner(g));
         }
         return winners;
@@ -413,7 +414,7 @@ public class PersonController extends Controller<Person> {
         } else {
             Stage s = new Stage();
             s.setChampionship(selectedC);
-            s.setNTeams(teams.size());
+            s.setNteams(teams.size());
             s.setName(getStageName(teams.size()));
             s = stageCTRL.insert(s);
             
@@ -425,7 +426,7 @@ public class PersonController extends Controller<Person> {
             
             infoMessage("Next stage is rolling!");
             clearTeams();
-            Integer id = selectedC.getId();
+            Integer id = selectedC.getIdChampionship();
             updateUserData();
             setSelectedC(findById(id));
         }
@@ -433,7 +434,7 @@ public class PersonController extends Controller<Person> {
     
     private Championship findById(Integer id) {
         for (Championship c : getCurrentChampionships()) {
-            if (c.getId() == id) return c;
+            if (c.getIdChampionship() == id) return c;
         }
         return null;
     }

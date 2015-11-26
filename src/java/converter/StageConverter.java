@@ -32,7 +32,7 @@ public class StageConverter implements Converter {
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
         Stage stage = (Stage) value;
-        return String.valueOf(stage.getId());
+        return String.valueOf(stage.getIdStage());
     }
     
 }

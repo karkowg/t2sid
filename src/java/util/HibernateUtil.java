@@ -2,14 +2,8 @@ package util;
 
 import java.util.ArrayList;
 import java.util.List;
-import model.Championship;
-import model.Game;
-import model.Person;
-import model.Stage;
-import model.Team;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.shards.ShardId;
 import org.hibernate.shards.ShardedConfiguration;
@@ -52,12 +46,12 @@ public class HibernateUtil {
     }
     
     private SessionFactory buildSession() {
-        AnnotationConfiguration prototypeConfig = new AnnotationConfiguration().configure("shard0.hibernate.cfg.xml");
-        prototypeConfig.addAnnotatedClass(Championship.class);
-        prototypeConfig.addAnnotatedClass(Game.class);
-        prototypeConfig.addAnnotatedClass(Person.class);
-        prototypeConfig.addAnnotatedClass(Stage.class);
-        prototypeConfig.addAnnotatedClass(Team.class);
+        Configuration prototypeConfig = new Configuration().configure("shard0.hibernate.cfg.xml");
+        prototypeConfig.addResource("model/Championship.hbm.xml");
+        prototypeConfig.addResource("model/Game.hbm.xml");
+        prototypeConfig.addResource("model/Person.hbm.xml");
+        prototypeConfig.addResource("model/Stage.hbm.xml");
+        prototypeConfig.addResource("model/Team.hbm.xml");
         List<ShardConfiguration> shardConfigs = new ArrayList<ShardConfiguration>();
         shardConfigs.add(buildShardConfig("shard0.hibernate.cfg.xml"));
         shardConfigs.add(buildShardConfig("shard1.hibernate.cfg.xml"));

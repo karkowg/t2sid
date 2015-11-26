@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 26/11/2015 19:49:56 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="model.Game" table="game" catalog="dbt2sid" optimistic-lock="version">
+        <id name="idGame" type="java.lang.Integer">
+            <column name="idGame" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="stage" class="model.Stage" fetch="select">
+            <column name="fkStage" />
+        </many-to-one>
+        <many-to-one name="teamByFkHome" class="model.Team" fetch="select">
+            <column name="fkHome" />
+        </many-to-one>
+        <many-to-one name="teamByFkVisitor" class="model.Team" fetch="select">
+            <column name="fkVisitor" />
+        </many-to-one>
+        <property name="number" type="int">
+            <column name="number" not-null="true" />
+        </property>
+        <property name="homeScore" type="java.lang.Integer">
+            <column name="homeScore" />
+        </property>
+        <property name="visitScore" type="java.lang.Integer">
+            <column name="visitScore" />
+        </property>
+    </class>
+</hibernate-mapping>
